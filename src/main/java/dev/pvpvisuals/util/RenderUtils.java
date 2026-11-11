@@ -1,0 +1,102 @@
+package dev.pvpvisuals.util;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.item.ItemStack;
+
+import java.awt.Color;
+
+/**
+ * 2D-рендер поверх GuiGraphics. Начиная с 1.21.6 старый путь RenderSystem.setShader + Tesselator убран
+ * (рендер идёт через RenderPipeline), поэтому весь 2D-интерфейс рисуется через GuiGraphics: он стабилен между версиями.
+ * Цвета везде в формате ARGB.
+ */
+public final class RenderUtils {
+    private RenderUtils() {}
+
+    public static final int WHITE = 0xFFFFFFFF;
+    public static final int GRAY = 0xFF9A9AA8;
+    public static final int DARK = 0xFF2A2A32;
+
+    public static void rect(GuiGraphics g, int x, int y, int w, int h, int color) {
+        if (w <= 0 || h <= 0) return;
+        g.fill(x, y, x + w, y + h, color);
+    }
+
+    public static void gradientV(GuiGraphics g, int x, int y, int w, int h, int top, int bottom) {
+        if (w <= 0 || h <= 0) return;
+        g.fillGradient(x, y, x + w, y + h, top, bottom);
+    }
+
+    public static void outline(GuiGraphics g, int x, int y, int w, int h, int color) {
+        rect(g, x, y, w, 1, color);
+        rect(g, x, y + h - 1, w, 1, color);
+        rect(g, x, y + 1, 1, h - 2, color);
+        rect(g, x + w - 1, y + 1, 1, h - 2, color);
+    }
+
+    /** Скруглённый прямоугольник: радиус строится построчно, без текстур и шейдеров. */
+    public static void roundRect(GuiGraphics g, int x, int y, int w, int h, int r, int color) {
+        if (w <= 0 || h <= 0) return;
+        r = Math.min(r, Math.min(w, h) / 2);
+        if (r <= 0) {
+            rect(g, x, y, w, h, color);
+            return;
+        }
+        for (int i = 0; i < r; i++) {
+            double dy = r - i - 0.5;
+            int inset = r - (int) Math.round(Math.sqrt(r * r - dy * dy));
+            rect(g, x + inset, y + i, w - inset * 2, 1, color);
+            rect(g, x + inset, y + h - 1 - i, w - inset * 2, 1, color);
+        }
+        rect(g, x, y + r, w, h - r * 2, color);
+    }
+
+    /** Тёмная панель со скруглением и акцентной линией сверху. */
+    public static void panel(GuiGraphics g, int x, int y, int w, int h, int background, int accent) {
+        roundRect(g, x, y, w, h, 3, background);
+        rect(g, x + 2, y, w - 4, 1, accent);
+    }
+
+    public static void text(GuiGraphics g, String s, int x, int y, int color) {
+        g.drawString(Minecraft.getInstance().font, s, x, y, color, false);
+    }
+
+    public static void textRight(GuiGraphics g, String s, int right, int y, int color) {
+        text(g, s, right - textWidth(s), y, color);
+    }
+
+    public static void textCentered(GuiGraphics g, String s, int cx, int y, int color) {
+        text(g, s, cx - textWidth(s) / 2, y, color);
+    }
+
+    public static int textWidth(String s) {
+        return Minecraft.getInstance().font.width(s);
+    }
+
+    public static void item(GuiGraphics g, ItemStack stack, int x, int y) {
+        g.renderItem(stack, x, y);
+    }
+
+    public static boolean hover(double mx, double my, int x, int y, int w, int h) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
+    }
+
+    public static int withAlpha(int color, int alpha) {
+        return (Math.max(0, Math.min(255, alpha)) << 24) | (color & 0xFFFFFF);
+    }
+
+    public static int mix(int a, int b, float t) {
+        t = Math.max(0f, Math.min(1f, t));
+        int ar = (a >> 16) & 255, ag = (a >> 8) & 255, ab = a & 255, aa = (a >>> 24) & 255;
+        int br = (b >> 16) & 255, bg = (b >> 8) & 255, bb = b & 255, ba = (b >>> 24) & 255;
+        return ((int) (aa + (ba - aa) * t) << 24)
+                | ((int) (ar + (br - ar) * t) << 16)
+                | ((int) (ag + (bg - ag) * t) << 8)
+                | (int) (ab + (bb - ab) * t);
+    }
+
+    public static int hsb(float h, float s, float b) {
+        return 0xFF000000 | (Color.HSBtoRGB(h, s, b) & 0xFFFFFF);
+    }
+}

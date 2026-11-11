@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "pvpvisuals",
+  "version": "${version}",
+  "name": "PvP Visuals",
+  "description": "HUD для PvP и буст FPS. Только клиентская сторона.",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["dev.pvpvisuals.PvpVisualsClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
