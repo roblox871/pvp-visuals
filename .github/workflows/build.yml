@@ -1,4 +1,4 @@
-name: Build Minecraft Mod
+name: Build with Gradle (Java 21)
 
 on:
   push:
@@ -11,28 +11,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Скачивание исходного кода
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Установка Java 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
           java-version: '21'
+          distribution: 'temurin'
 
-      - name: Выдача прав на запуск Gradle
-        run: chmod +x gradlew
-
-      - name: Сборка проекта с помощью Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
-          arguments: build
+          gradle-version: '8.10.2' # Версия Gradle с полной поддержкой Java 21
 
-      - name: Сохранение готового JAR-файла
-        uses: actions/upload-artifact@v4
-        with:
-          name: Mod-JAR
-          path: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
-            !build/libs/*-dev.jar
+      - name: Generate gradlew and build
+        run: |
+          gradle wrapper
+          ./gradlew build
