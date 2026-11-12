@@ -23,11 +23,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.10.2'
+          gradle-version: 'current'
           validate-wrappers: false
 
       - name: Generate gradlew and build
         run: |
-          gradle wrapper --stacktrace
+          gradle wrapper
           chmod +x gradlew
-          ./gradlew build --stacktrace
+          ./gradlew build
