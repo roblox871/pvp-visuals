@@ -28,6 +28,6 @@ jobs:
 
       - name: Generate gradlew and build
         run: |
-          gradle wrapper
+          gradle wrapper --stacktrace
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew build --stacktrace
