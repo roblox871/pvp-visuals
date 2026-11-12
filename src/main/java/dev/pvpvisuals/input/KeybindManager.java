@@ -15,7 +15,7 @@ public final class KeybindManager {
     private static final int GLFW_LAST = 348;
 
     public void tick(Minecraft mc, ModuleManager modules) {
-        long window = mc.getWindow().handle();
+        var window = mc.getWindow();
         boolean inGame = mc.screen == null;
 
         for (Module m : modules.all()) {

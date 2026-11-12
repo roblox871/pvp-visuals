@@ -3,7 +3,7 @@ package dev.pvpvisuals;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.CloudStatus;
-import net.minecraft.client.ParticleStatus;
+import net.minecraft.server.level.ParticleStatus;
 
 /** Снижает нагрузку на графику. Исходные значения запоминаются и возвращаются при выключении. */
 public final class FpsBoost {
