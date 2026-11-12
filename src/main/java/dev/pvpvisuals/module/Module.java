@@ -1,8 +1,12 @@
 package dev.pvpvisuals.module;
 
 import com.google.gson.JsonObject;
+import dev.pvpvisuals.module.impl.InterfaceModule;
 import dev.pvpvisuals.setting.Setting;
+import dev.pvpvisuals.util.Notifications;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +71,7 @@ public abstract class Module {
         if (!ready) return;
         if (value) onEnable();
         else onDisable();
+        if (!isHoldMode() && !(this instanceof InterfaceModule)) Notifications.push(name, value);
     }
 
     public int getKey() {
@@ -87,6 +92,9 @@ public abstract class Module {
     public void onDisable() {}
 
     public void onTick() {}
+
+    /** Рисование поверх экрана для модулей, которые не являются перетаскиваемыми HUD-элементами. */
+    public void renderOverlay(GuiGraphics g, DeltaTracker delta) {}
 
     public JsonObject save() {
         JsonObject o = new JsonObject();

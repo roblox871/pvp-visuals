@@ -5,6 +5,7 @@ import dev.pvpvisuals.config.ConfigManager;
 import dev.pvpvisuals.gui.ClickGui;
 import dev.pvpvisuals.input.KeybindManager;
 import dev.pvpvisuals.module.ModuleManager;
+import dev.pvpvisuals.module.impl.CrosshairModule;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -47,6 +48,14 @@ public class PvpVisualsClient implements ClientModInitializer {
                 VanillaHudElements.MISC_OVERLAYS,
                 Identifier.fromNamespaceAndPath(MOD_ID, "hud"),
                 modules::renderHud
+        );
+
+        // Свой прицел заменяет ванильный, пока модуль Crosshair включён
+        HudElementRegistry.replaceElement(
+                VanillaHudElements.CROSSHAIR,
+                original -> (g, d) -> {
+                    if (!CrosshairModule.isActive()) original.render(g, d);
+                }
         );
 
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> {

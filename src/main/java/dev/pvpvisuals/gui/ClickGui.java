@@ -125,7 +125,7 @@ public class ClickGui extends Screen {
         bounds.put(cat, new int[]{x, top, pw, bodyTop + bodyH - top});
 
         RenderUtils.roundRect(g, x, top, pw, 20, 3, 0xFF1A1A20);
-        RenderUtils.rect(g, x + 2, top, pw - 4, 1, accent);
+        RenderUtils.gradientH(g, x + 2, top, pw - 4, 1, accent, InterfaceModule.accent2());
         RenderUtils.text(g, cat.title, x + 6, top + 6, RenderUtils.WHITE);
         RenderUtils.rect(g, x, bodyTop, pw, bodyH, 0xD0101014);
 
@@ -135,7 +135,10 @@ public class ClickGui extends Screen {
         for (Module m : mods) {
             boolean hov = RenderUtils.hover(mouseX, mouseY, x, cy, pw, ROW)
                     && mouseY >= clipTop && mouseY < clipBottom;
-            if (m.isEnabled()) RenderUtils.rect(g, x, cy, pw, ROW, RenderUtils.withAlpha(accent, 90));
+            if (m.isEnabled()) {
+                RenderUtils.gradientH(g, x, cy, pw, ROW,
+                        RenderUtils.withAlpha(accent, 120), RenderUtils.withAlpha(InterfaceModule.accent2(), 50));
+            }
             else if (hov) RenderUtils.rect(g, x, cy, pw, ROW, 0x30FFFFFF);
             RenderUtils.text(g, m.getName(), x + 6, cy + 4, m.isEnabled() ? RenderUtils.WHITE : RenderUtils.GRAY);
 

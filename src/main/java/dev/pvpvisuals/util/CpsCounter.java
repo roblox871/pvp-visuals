@@ -11,12 +11,16 @@ public final class CpsCounter {
     private static final ArrayDeque<Long> LEFT = new ArrayDeque<>();
     private static final ArrayDeque<Long> RIGHT = new ArrayDeque<>();
     private static boolean wasLeft, wasRight;
+    private static long lastLeft;
 
     public static void tick(Minecraft mc) {
         long now = System.currentTimeMillis();
         boolean l = mc.mouseHandler.isLeftPressed();
         boolean r = mc.mouseHandler.isRightPressed();
-        if (l && !wasLeft) LEFT.add(now);
+        if (l && !wasLeft) {
+            LEFT.add(now);
+            lastLeft = now;
+        }
         if (r && !wasRight) RIGHT.add(now);
         wasLeft = l;
         wasRight = r;
@@ -30,5 +34,10 @@ public final class CpsCounter {
 
     public static int right() {
         return RIGHT.size();
+    }
+
+    /** Сколько миллисекунд прошло с последнего клика левой кнопкой. */
+    public static long sinceLeftClick() {
+        return System.currentTimeMillis() - lastLeft;
     }
 }

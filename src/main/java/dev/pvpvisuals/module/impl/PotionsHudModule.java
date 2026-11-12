@@ -25,6 +25,7 @@ public final class PotionsHudModule extends HudModule {
         if (mc.player == null || tick++ % 5 != 0) return;
         rows.clear();
         for (MobEffectInstance e : mc.player.getActiveEffects()) {
+            if (FullBrightModule.owns(e)) continue;
             String name = e.getEffect().value().getDisplayName().getString() + " " + (e.getAmplifier() + 1);
             String time;
             if (e.isInfiniteDuration()) {

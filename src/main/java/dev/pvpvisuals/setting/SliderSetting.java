@@ -46,7 +46,8 @@ public final class SliderSetting extends Setting<Double> {
     }
 
     public String display() {
-        return step >= 1 ? String.valueOf(getInt()) : String.format(Locale.ROOT, "%.1f", value);
+        if (step >= 1) return String.valueOf(getInt());
+        return String.format(Locale.ROOT, step < 0.1 ? "%.2f" : "%.1f", value);
     }
 
     @Override

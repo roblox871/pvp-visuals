@@ -7,6 +7,12 @@
   "authors": ["You"],
   "license": "MIT",
   "environment": "client",
+  "mixins": [
+    {
+      "config": "pvpvisuals.mixins.json",
+      "environment": "client"
+    }
+  ],
   "entrypoints": {
     "client": ["dev.pvpvisuals.PvpVisualsClient"]
   },

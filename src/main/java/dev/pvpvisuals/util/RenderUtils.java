@@ -1,5 +1,6 @@
 package dev.pvpvisuals.util;
 
+import dev.pvpvisuals.module.impl.InterfaceModule;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +29,18 @@ public final class RenderUtils {
         g.fillGradient(x, y, x + w, y + h, top, bottom);
     }
 
+    /** Горизонтальный градиент: рисуется не более чем 32 полосами, чтобы не нагружать кадр. */
+    public static void gradientH(GuiGraphics g, int x, int y, int w, int h, int left, int right) {
+        if (w <= 0 || h <= 0) return;
+        int steps = Math.min(w, 32);
+        for (int i = 0; i < steps; i++) {
+            int x1 = x + i * w / steps;
+            int x2 = x + (i + 1) * w / steps;
+            if (x2 <= x1) continue;
+            g.fill(x1, y, x2, y + h, mix(left, right, steps == 1 ? 0f : i / (float) (steps - 1)));
+        }
+    }
+
     public static void outline(GuiGraphics g, int x, int y, int w, int h, int color) {
         rect(g, x, y, w, 1, color);
         rect(g, x, y + h - 1, w, 1, color);
@@ -52,14 +65,27 @@ public final class RenderUtils {
         rect(g, x, y + r, w, h - r * 2, color);
     }
 
-    /** Тёмная панель со скруглением и акцентной линией сверху. */
+    /** Панель в выбранном стиле интерфейса: тень, скругление, градиентная линия или боковая полоса. */
     public static void panel(GuiGraphics g, int x, int y, int w, int h, int background, int accent) {
-        roundRect(g, x, y, w, h, 3, background);
-        rect(g, x + 2, y, w - 4, 1, accent);
+        int r = InterfaceModule.radius();
+        if (InterfaceModule.shadow()) {
+            roundRect(g, x - 1, y - 1, w + 2, h + 2, r + 1, 0x30000000);
+            roundRect(g, x - 2, y - 2, w + 4, h + 4, r + 2, 0x14000000);
+        }
+        roundRect(g, x, y, w, h, r, background);
+        int inner = Math.max(0, w - 2 * r);
+        switch (InterfaceModule.styleName()) {
+            case "Minimal" -> rect(g, x, y + r, 2, Math.max(0, h - 2 * r), accent);
+            case "Solid" -> gradientH(g, x + r, y, inner, 2, accent, InterfaceModule.accent2());
+            default -> {
+                gradientH(g, x + r, y, inner, 1, accent, InterfaceModule.accent2());
+                rect(g, x + r, y + 1, inner, 1, 0x14FFFFFF);
+            }
+        }
     }
 
     public static void text(GuiGraphics g, String s, int x, int y, int color) {
-        g.drawString(Minecraft.getInstance().font, s, x, y, color, false);
+        g.drawString(Minecraft.getInstance().font, s, x, y, color, InterfaceModule.textShadow());
     }
 
     public static void textRight(GuiGraphics g, String s, int right, int y, int color) {
