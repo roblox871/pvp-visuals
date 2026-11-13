@@ -1,6 +1,37 @@
 package dev.pvpvisuals.module;
 
 import dev.pvpvisuals.module.impl.ArmorHudModule;
+import dev.pvpvisuals.module.impl.HitMarkerModule;
+import dev.pvpvisuals.module.impl.AttackBarModule;
+import dev.pvpvisuals.module.impl.RainbowBarModule;
+import dev.pvpvisuals.module.impl.ScreenFrameModule;
+import dev.pvpvisuals.module.impl.FovChangerModule;
+import dev.pvpvisuals.module.impl.SensitivityModule;
+import dev.pvpvisuals.module.impl.RawInputModule;
+import dev.pvpvisuals.module.impl.NoAutoJumpModule;
+import dev.pvpvisuals.module.impl.NoPauseModule;
+import dev.pvpvisuals.module.impl.HideHudModule;
+import dev.pvpvisuals.module.impl.PingAlertModule;
+import dev.pvpvisuals.module.impl.WelcomeModule;
+import dev.pvpvisuals.module.impl.SimpleHuds2;
+import dev.pvpvisuals.module.impl.TimeChangerModule;
+import dev.pvpvisuals.module.impl.SkyColorModule;
+import dev.pvpvisuals.module.impl.FreeLookModule;
+import dev.pvpvisuals.module.impl.TotemPopsModule;
+import dev.pvpvisuals.module.impl.NoFireModule;
+import dev.pvpvisuals.module.impl.ScreenTintModule;
+import dev.pvpvisuals.module.impl.HurtFlashModule;
+import dev.pvpvisuals.module.impl.CinematicBarsModule;
+import dev.pvpvisuals.module.impl.ColoredEdgesModule;
+import dev.pvpvisuals.module.impl.HealthBarModule;
+import dev.pvpvisuals.module.impl.CompassModule;
+import dev.pvpvisuals.module.impl.CooldownsModule;
+import dev.pvpvisuals.module.impl.FpsGraphModule;
+import dev.pvpvisuals.module.impl.SimpleHuds;
+import dev.pvpvisuals.module.impl.CoordinatesModule;
+import dev.pvpvisuals.module.impl.LowHealthVignetteModule;
+import dev.pvpvisuals.module.impl.ViewModelModule;
+import dev.pvpvisuals.module.impl.ShieldIndicatorModule;
 import dev.pvpvisuals.module.impl.AspectRatioModule;
 import dev.pvpvisuals.module.impl.AlertsModule;
 import dev.pvpvisuals.module.impl.AutoRespawnModule;
@@ -62,6 +93,17 @@ public final class ModuleManager {
         register(new FullBrightModule());
         register(new NoRenderModule());
         register(new CrosshairModule());
+        register(new NoFireModule());
+        register(new TimeChangerModule());
+        register(new SkyColorModule());
+        register(new FreeLookModule());
+        register(new TotemPopsModule());
+        register(new ScreenTintModule());
+        register(new HurtFlashModule());
+        register(new CinematicBarsModule());
+        register(new ColoredEdgesModule());
+        register(new LowHealthVignetteModule());
+        register(new ViewModelModule());
         register(new HitParticlesModule());
         register(new DamageIndicatorsModule());
         // HUD
@@ -73,6 +115,26 @@ public final class ModuleManager {
         register(new PotionsHudModule());
         register(new KeystrokesModule());
         register(new ArmorHudModule());
+        register(new ShieldIndicatorModule());
+        register(new CoordinatesModule());
+        register(new HealthBarModule());
+        register(new CompassModule());
+        register(new CooldownsModule());
+        register(new FpsGraphModule());
+        for (Module m : SimpleHuds.create()) register(m);
+        register(new HitMarkerModule());
+        register(new AttackBarModule());
+        register(new RainbowBarModule());
+        register(new ScreenFrameModule());
+        register(new FovChangerModule());
+        register(new SensitivityModule());
+        register(new RawInputModule());
+        register(new NoAutoJumpModule());
+        register(new NoPauseModule());
+        register(new HideHudModule());
+        register(new PingAlertModule());
+        register(new WelcomeModule());
+        for (Module m : SimpleHuds2.create()) register(m);
         register(new HeldItemModule());
         register(new MovementStatusModule());
         register(new ItemCounterModule());
@@ -146,6 +208,41 @@ public final class ModuleManager {
         }
         Notifications.render(g);
     }
+
+
+    /** Модули с собственным удачным местом на экране: авто-расстановка их не трогает. */
+    private static final java.util.Set<String> FIXED = java.util.Set.of(
+            "Watermark", "ArrayList", "Keystrokes", "ArmorHUD", "Held Item", "TargetHUD", "Combo", "Direction",
+            "Movement Status", "Shield Indicator", "Health Bar", "Cooldowns", "FPS Graph");
+
+    /** Раскладывает включённые плашки колонками слева без наложений. */
+    public void autoLayout(int sw, int sh) {
+        int x = 6, y = 30, colW = 0;
+        for (HudModule h : hudModules()) {
+            if (!h.isEnabled() || FIXED.contains(h.getName())) continue;
+            if (y + h.getHeight() > sh - 40 && y > 30) {
+                x += colW + 6;
+                y = 30;
+                colW = 0;
+            }
+            h.setPosition(x, y, sw, sh);
+            y += h.getHeight() + 6;
+            colW = Math.max(colW, h.getWidth());
+        }
+    }
+
+    /** Включает только перечисленные модули (по внутренним именам), остальные выключает. Интерфейс не трогает. */
+    public void applyPreset(java.util.Collection<String> names) {
+        for (Module m : modules) {
+            if (m instanceof dev.pvpvisuals.module.impl.InterfaceModule) continue;
+            m.setEnabled(names.contains(m.getName()));
+        }
+    }
+
+    public static final java.util.List<String> PRESET_PVP = java.util.List.of(
+            "Watermark", "Info", "Keystrokes", "ArmorHUD", "Potions HUD", "TargetHUD", "Combo", "Shield Indicator",
+            "Alerts", "Hit Marker", "Totem Pops", "FullBright", "Welcome");
+    public static final java.util.List<String> PRESET_MINIMAL = java.util.List.of("Watermark", "Info", "Alerts", "Welcome");
 
     /** Вызывается при закрытии игры: возвращает изменённые настройки клиента. */
     public void shutdown() {

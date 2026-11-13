@@ -1,0 +1,91 @@
+package dev.pvpvisuals.module;
+
+import java.util.Map;
+
+/** Русские названия модулей для интерфейса. Внутренние имена (для конфигов) остаются прежними. */
+public final class Titles {
+    private Titles() {}
+
+    private static final Map<String, String> RU = Map.ofEntries(
+            Map.entry("Interface", "Интерфейс"),
+            Map.entry("Time Changer", "Время суток"), Map.entry("Sky Color", "Цвет неба"), Map.entry("FreeLook", "Свободный обзор"), Map.entry("Totem Pops", "Попы тотемов"),
+            Map.entry("Kills", "Убийства"), Map.entry("Hits Taken", "Полученные удары"), Map.entry("Hit Trade", "Обмен ударами"),
+            Map.entry("Reach Display", "Дистанция удара"), Map.entry("Hit Timer", "Таймер удара"), Map.entry("Last Damage", "Последний урон"),
+            Map.entry("Fight Timer", "Таймер боя"), Map.entry("Armor Durability", "Прочность брони"), Map.entry("Offhand HUD", "Вторая рука"),
+            Map.entry("Inventory Preview", "Инвентарь на экране"), Map.entry("Use Bar", "Полоска использования"),
+            Map.entry("Saturation", "Насыщение"), Map.entry("XP Level", "Уровень опыта"), Map.entry("Air Supply", "Запас воздуха"),
+            Map.entry("Chunk", "Чанк"), Map.entry("Nether Coords", "Координаты Незера"), Map.entry("Date", "Дата"),
+            Map.entry("Gamemode", "Игровой режим"), Map.entry("Max Speed", "Макс. скорость"), Map.entry("Weather HUD", "Погода (плашка)"),
+            Map.entry("Held Name", "Название предмета"), Map.entry("Potion Count", "Счётчик зелий"), Map.entry("Arrow Count", "Счётчик стрел"),
+            Map.entry("Target Distance", "Расстояние до цели"), Map.entry("Block Count", "Счётчик блоков"), Map.entry("Burning", "Индикатор огня"),
+            Map.entry("Elytra Speed", "Скорость элитр"), Map.entry("Fall Distance", "Высота падения"), Map.entry("Crit Indicator", "Индикатор крита"),
+            Map.entry("Hit Marker", "Маркер попадания"), Map.entry("Attack Bar", "Полоска удара"), Map.entry("Rainbow Bar", "Радужная полоска"),
+            Map.entry("Screen Frame", "Рамка экрана"), Map.entry("FOV Changer", "Поле зрения (FOV)"), Map.entry("Sensitivity", "Чувствительность"),
+            Map.entry("Raw Input", "Сырой ввод мыши"), Map.entry("No Auto Jump", "Без автопрыжка"), Map.entry("No Pause", "Без паузы при сворачивании"),
+            Map.entry("Hide HUD", "Скрыть интерфейс"), Map.entry("Ping Alert", "Предупреждение о пинге"), Map.entry("Welcome", "Приветствие"),
+
+            Map.entry("Zoom", "Приближение"),
+            Map.entry("Smooth Camera", "Плавная камера"),
+            Map.entry("Weather", "Погода"),
+            Map.entry("NameTags", "Ники игроков"),
+            Map.entry("Aspect Ratio", "Разрешение 4:3"),
+            Map.entry("Fog", "Цвет тумана"),
+            Map.entry("FullBright", "Яркость"),
+            Map.entry("NoRender", "Без эффектов"),
+            Map.entry("Crosshair", "Прицел"),
+            Map.entry("Hit Particles", "Частицы ударов"),
+            Map.entry("Damage Indicators", "Числа урона"),
+            Map.entry("No Fire", "Без огня"),
+            Map.entry("ViewModel", "Предметы в руках"),
+            Map.entry("Low HP Vignette", "Красные края при низком HP"),
+            Map.entry("Screen Tint", "Цветной фильтр"),
+            Map.entry("Hurt Flash", "Вспышка при уроне"),
+            Map.entry("Cinematic Bars", "Кино-полосы"),
+            Map.entry("Colored Edges", "Свечение краёв"),
+            Map.entry("Watermark", "Водяной знак"),
+            Map.entry("ArrayList", "Список модулей"),
+            Map.entry("Info", "Информация"),
+            Map.entry("TargetHUD", "Информация о цели"),
+            Map.entry("Combo", "Комбо"),
+            Map.entry("Potions HUD", "Эффекты зелий"),
+            Map.entry("Keystrokes", "Клавиши"),
+            Map.entry("ArmorHUD", "Броня"),
+            Map.entry("Held Item", "Предмет в руке"),
+            Map.entry("Movement Status", "Статус движения"),
+            Map.entry("Item Counter", "Счётчик предметов"),
+            Map.entry("Alerts", "Предупреждения"),
+            Map.entry("Direction", "Направление"),
+            Map.entry("Session", "Сессия"),
+            Map.entry("Server Info", "Сервер"),
+            Map.entry("Memory", "Память"),
+            Map.entry("Shield Indicator", "Индикатор щита"),
+            Map.entry("Coordinates", "Координаты"),
+            Map.entry("Health Bar", "Полоски здоровья"),
+            Map.entry("Compass", "Компас"),
+            Map.entry("Cooldowns", "Перезарядки"),
+            Map.entry("FPS Graph", "График FPS"),
+            Map.entry("Ping", "Пинг"),
+            Map.entry("FPS Counter", "Счётчик FPS"),
+            Map.entry("Light Level", "Уровень света"),
+            Map.entry("Totem Counter", "Счётчик тотемов"),
+            Map.entry("World Time", "Время в мире"),
+            Map.entry("Players Count", "Число игроков"),
+            Map.entry("Entities Count", "Число существ"),
+            Map.entry("Looking At", "Блок перед вами"),
+            Map.entry("Free Slots", "Свободные слоты"),
+            Map.entry("Hit Counter", "Счётчик ударов"),
+            Map.entry("Death Point", "Точка смерти"),
+            Map.entry("Angles", "Углы взгляда"),
+            Map.entry("Clock", "Часы"),
+            Map.entry("AutoSprint", "Авто-спринт"),
+            Map.entry("Toggle Keys", "Переключаемые клавиши"),
+            Map.entry("Auto Respawn", "Авто-возрождение"),
+            Map.entry("Hit Sound", "Звук удара"),
+            Map.entry("FPS Boost", "Повышение FPS"),
+            Map.entry("System Optimizer", "Оптимизация системы")
+    );
+
+    public static String of(String name) {
+        return RU.getOrDefault(name, name);
+    }
+}

@@ -1,10 +1,10 @@
 package dev.pvpvisuals.module;
 
 public enum Category {
-    VISUALS("Visuals"),
-    HUD("HUD"),
-    PLAYER("Player"),
-    MISC("Misc");
+    VISUALS("Визуал"),
+    HUD("Интерфейс"),
+    PLAYER("Игрок"),
+    MISC("Прочее");
 
     public final String title;
 

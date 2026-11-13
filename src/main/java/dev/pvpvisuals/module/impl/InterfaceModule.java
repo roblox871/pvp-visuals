@@ -13,7 +13,7 @@ public final class InterfaceModule extends Module {
 
     public final ColorSetting accent = add(new ColorSetting("Цвет 1", 0xFF8A5CFF));
     public final ColorSetting accent2 = add(new ColorSetting("Цвет 2", 0xFF4DA3FF));
-    public final ModeSetting style = add(new ModeSetting("Стиль", "Glass", "Glass", "Solid", "Minimal"));
+    public final ModeSetting style = add(new ModeSetting("Стиль", "Glass", "Glass", "Solid", "Minimal", "Neon"));
     public final SliderSetting opacity = add(new SliderSetting("Прозрачность", 170, 60, 255, 1));
     public final SliderSetting radius = add(new SliderSetting("Скругление", 3, 0, 6, 1));
     public final BooleanSetting shadow = add(new BooleanSetting("Тень панелей", true));

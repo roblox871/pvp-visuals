@@ -36,7 +36,7 @@ public class HudEditorScreen extends Screen {
             boolean hov = h == dragging || RenderUtils.hover(mx, my, h.getX(), h.getY(), h.getWidth(), h.getHeight());
             RenderUtils.outline(g, h.getX() - 1, h.getY() - 1, h.getWidth() + 2, h.getHeight() + 2,
                     hov ? accent : RenderUtils.withAlpha(accent, 110));
-            RenderUtils.text(g, h.getName(), h.getX(), h.getY() - 10, hov ? RenderUtils.WHITE : RenderUtils.GRAY);
+            RenderUtils.text(g, h.getTitle(), h.getX(), h.getY() - 10, hov ? RenderUtils.WHITE : RenderUtils.GRAY);
         }
         RenderUtils.textCentered(g, "Перетаскивайте элементы мышью. Esc - сохранить и выйти", this.width / 2, 8, RenderUtils.WHITE);
     }

@@ -54,6 +54,8 @@ public class ClickGui extends Screen {
     private final Map<Category, int[]> bounds = new EnumMap<>(Category.class);
     private Region active;
     private Module binding;
+    private Module hoverTip;
+    private String query = "";
     private int mouseX, mouseY;
 
     public ClickGui() {
@@ -72,6 +74,7 @@ public class ClickGui extends Screen {
         this.mouseY = my;
         regions.clear();
         bounds.clear();
+        hoverTip = null;
 
         int accent = InterfaceModule.accent();
         int panelW = Math.min(112, (this.width - 24 - 3 * GAP) / 4);
@@ -80,19 +83,48 @@ public class ClickGui extends Screen {
 
         RenderUtils.text(g, "PvP Visuals", startX, 14, accent);
         int bx = startX + total;
-        bx = topButton(g, "HUD Editor", bx, 10, () -> minecraft.setScreen(new HudEditorScreen()));
-        bx = topButton(g, "Load", bx, 10, () -> ConfigManager.load(PvpVisualsClient.modules()));
-        topButton(g, "Save", bx, 10, () -> ConfigManager.save(PvpVisualsClient.modules()));
+        bx = topButton(g, "Профиль: минимум", bx, this.height - 38, () -> {
+            PvpVisualsClient.modules().applyPreset(dev.pvpvisuals.module.ModuleManager.PRESET_MINIMAL);
+            PvpVisualsClient.modules().autoLayout(this.width, this.height);
+        });
+        bx = topButton(g, "Профиль: ПвП", bx, this.height - 38, () -> {
+            PvpVisualsClient.modules().applyPreset(dev.pvpvisuals.module.ModuleManager.PRESET_PVP);
+            PvpVisualsClient.modules().autoLayout(this.width, this.height);
+        });
+        bx = topButton(g, "Авто-HUD", bx, this.height - 38, () -> PvpVisualsClient.modules().autoLayout(this.width, this.height));
+        bx = topButton(g, "HUD Editor", bx, this.height - 38, () -> minecraft.setScreen(new HudEditorScreen()));
+        bx = topButton(g, "Load", bx, this.height - 38, () -> ConfigManager.load(PvpVisualsClient.modules()));
+        topButton(g, "Save", bx, this.height - 38, () -> ConfigManager.save(PvpVisualsClient.modules()));
 
         Category[] cats = Category.values();
         for (int i = 0; i < cats.length; i++) {
             drawPanel(g, cats[i], startX + i * (panelW + GAP), TOP, panelW, accent);
         }
 
+        drawSearch(g, startX, total);
+        drawTooltip(g);
+
         String hint = binding != null
-                ? "Нажмите клавишу для " + binding.getName() + " (Delete - снять, Esc - отмена)"
-                : "ЛКМ - вкл/выкл   ПКМ - настройки   СКМ - клавиша";
+                ? "Нажмите клавишу для " + binding.getTitle() + " (Delete - снять, Esc - отмена)"
+                : "ЛКМ - вкл/выкл   ПКМ - настройки   СКМ - клавиша   Печатайте для поиска (англ.)";
         RenderUtils.textCentered(g, hint, this.width / 2, this.height - 12, RenderUtils.GRAY);
+    }
+
+    private void drawSearch(GuiGraphics g, int startX, int total) {
+        int w = 130, x = this.width / 2 - w / 2, y = 10;
+        RenderUtils.roundRect(g, x, y, w, 16, 3, 0xFF1A1A20);
+        boolean blink = (System.currentTimeMillis() / 500) % 2 == 0;
+        String shown = query.isEmpty() ? "Поиск..." : query + (blink ? "_" : "");
+        RenderUtils.text(g, shown, x + 6, y + 4, query.isEmpty() ? 0xFF6A6A78 : RenderUtils.WHITE);
+    }
+
+    private void drawTooltip(GuiGraphics g) {
+        if (hoverTip == null || binding != null) return;
+        String text = hoverTip.getDescription();
+        int w = RenderUtils.textWidth(text) + 12;
+        int x = Math.min(mouseX + 12, this.width - w - 4), y = Math.min(mouseY + 12, this.height - 22);
+        RenderUtils.panel(g, x, y, w, 16, 0xF0101014, InterfaceModule.accent());
+        RenderUtils.text(g, text, x + 6, y + 4, RenderUtils.WHITE);
     }
 
     private int topButton(GuiGraphics g, String label, int right, int y, Runnable action) {
@@ -108,7 +140,13 @@ public class ClickGui extends Screen {
     }
 
     private void drawPanel(GuiGraphics g, Category cat, int x, int top, int pw, int accent) {
-        List<Module> mods = PvpVisualsClient.modules().byCategory(cat);
+        List<Module> all = PvpVisualsClient.modules().byCategory(cat);
+        List<Module> mods = new ArrayList<>();
+        int enabledCount = 0;
+        for (Module m : all) {
+            if (m.isEnabled()) enabledCount++;
+            if (query.isEmpty() || m.getName().toLowerCase().contains(query) || m.getTitle().toLowerCase().contains(query)) mods.add(m);
+        }
 
         int content = 0;
         for (Module m : mods) {
@@ -117,7 +155,7 @@ public class ClickGui extends Screen {
         }
 
         int bodyTop = top + 20;
-        int bodyH = Math.min(content, this.height - bodyTop - 24);
+        int bodyH = Math.min(content, this.height - bodyTop - 46);
         bodyH = Math.max(bodyH, ROW);
         float maxScroll = Math.max(0, content - bodyH);
         float scroll = Math.max(0, Math.min(maxScroll, SCROLL.getOrDefault(cat, 0f)));
@@ -127,6 +165,7 @@ public class ClickGui extends Screen {
         RenderUtils.roundRect(g, x, top, pw, 20, 3, 0xFF1A1A20);
         RenderUtils.gradientH(g, x + 2, top, pw - 4, 1, accent, InterfaceModule.accent2());
         RenderUtils.text(g, cat.title, x + 6, top + 6, RenderUtils.WHITE);
+        RenderUtils.textRight(g, enabledCount + "/" + all.size(), x + pw - 6, top + 6, RenderUtils.GRAY);
         RenderUtils.rect(g, x, bodyTop, pw, bodyH, 0xD0101014);
 
         int clipTop = bodyTop, clipBottom = bodyTop + bodyH;
@@ -135,12 +174,14 @@ public class ClickGui extends Screen {
         for (Module m : mods) {
             boolean hov = RenderUtils.hover(mouseX, mouseY, x, cy, pw, ROW)
                     && mouseY >= clipTop && mouseY < clipBottom;
+            if (hov) hoverTip = m;
             if (m.isEnabled()) {
+                RenderUtils.rect(g, x, cy, 2, ROW, accent);
                 RenderUtils.gradientH(g, x, cy, pw, ROW,
                         RenderUtils.withAlpha(accent, 120), RenderUtils.withAlpha(InterfaceModule.accent2(), 50));
             }
             else if (hov) RenderUtils.rect(g, x, cy, pw, ROW, 0x30FFFFFF);
-            RenderUtils.text(g, m.getName(), x + 6, cy + 4, m.isEnabled() ? RenderUtils.WHITE : RenderUtils.GRAY);
+            RenderUtils.text(g, m.getTitle(), x + 6, cy + 4, m.isEnabled() ? RenderUtils.WHITE : RenderUtils.GRAY);
 
             String tag;
             if (binding == m) tag = "...";
@@ -276,6 +317,15 @@ public class ClickGui extends Screen {
             if (key == GLFW.GLFW_KEY_DELETE || key == GLFW.GLFW_KEY_BACKSPACE) binding.setKey(-1);
             else if (key != GLFW.GLFW_KEY_ESCAPE) binding.setKey(key);
             binding = null;
+            return true;
+        }
+        if (key == GLFW.GLFW_KEY_BACKSPACE && !query.isEmpty()) {
+            query = query.substring(0, query.length() - 1);
+            return true;
+        }
+        if ((key >= GLFW.GLFW_KEY_A && key <= GLFW.GLFW_KEY_Z) || (key >= GLFW.GLFW_KEY_0 && key <= GLFW.GLFW_KEY_9)
+                || key == GLFW.GLFW_KEY_SPACE) {
+            if (query.length() < 16) query += (char) (key >= GLFW.GLFW_KEY_A && key <= GLFW.GLFW_KEY_Z ? key + 32 : key);
             return true;
         }
         if (key == GLFW.GLFW_KEY_RIGHT_SHIFT) {

@@ -20,7 +20,7 @@ public abstract class GameRendererMixin {
     @Inject(method = "getProjectionMatrix(F)Lorg/joml/Matrix4f;", at = @At("RETURN"), cancellable = true, require = 0)
     private void pvpvisuals$aspectRatio(float fovDegrees, CallbackInfoReturnable<Matrix4f> cir) {
         float target = AspectRatioModule.targetRatio();
-        if (target <= 0f) return;
+        if (!(target > 0.3f) || !Float.isFinite(target)) return;
 
         Matrix4f m = cir.getReturnValue();
         Window window = Minecraft.getInstance().getWindow();
@@ -33,8 +33,13 @@ public abstract class GameRendererMixin {
         // защита от повторного применения: масштабируем только матрицу с исходным соотношением сторон
         if (Math.abs(m.m00() - expected) > Math.abs(expected) * 0.02f) return;
 
-        m.m00(m.m00() * current / target);
-        cir.setReturnValue(m);
+        float scaled = m.m00() * current / target;
+        if (!Float.isFinite(scaled) || Math.abs(current - target) < 0.001f) return;
+
+        // меняем копию, а не исходную матрицу: игра может хранить её и использовать повторно
+        Matrix4f copy = new Matrix4f(m);
+        copy.m00(scaled);
+        cir.setReturnValue(copy);
         MixinStatus.aspectApplied = true;
     }
 }

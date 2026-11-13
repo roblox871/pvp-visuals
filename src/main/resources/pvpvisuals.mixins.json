@@ -5,7 +5,15 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "FogRendererMixin",
-    "GameRendererMixin"
+    "GameRendererMixin",
+    "ScreenEffectRendererMixin",
+    "ItemInHandRendererMixin",
+    "LivingEntityMixin",
+    "LevelTimeMixin",
+    "ClientLevelSkyMixin",
+    "EntityTurnMixin",
+    "CameraMixin",
+    "ClientPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 0

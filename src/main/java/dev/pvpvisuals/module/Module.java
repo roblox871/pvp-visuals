@@ -41,6 +41,11 @@ public abstract class Module {
         return setting;
     }
 
+    /** Название для показа игроку (по-русски). */
+    public String getTitle() {
+        return Titles.of(name);
+    }
+
     public String getName() {
         return name;
     }
@@ -71,7 +76,7 @@ public abstract class Module {
         if (!ready) return;
         if (value) onEnable();
         else onDisable();
-        if (!isHoldMode() && !(this instanceof InterfaceModule)) Notifications.push(name, value);
+        if (!isHoldMode() && !(this instanceof InterfaceModule)) Notifications.push(getTitle(), value);
     }
 
     public int getKey() {

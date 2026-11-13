@@ -49,7 +49,7 @@ public final class ArrayListModule extends HudModule {
             progress.put(m, p);
             shown.add(m);
         }
-        shown.sort(Comparator.comparingInt((Module m) -> RenderUtils.textWidth(m.getName())).reversed());
+        shown.sort(Comparator.comparingInt((Module m) -> RenderUtils.textWidth(m.getTitle())).reversed());
 
         height = Math.max(ROW, shown.size() * ROW);
         int right = x + width;
@@ -60,7 +60,7 @@ public final class ArrayListModule extends HudModule {
         for (int i = 0; i < n; i++) {
             Module m = shown.get(i);
             float p = progress.get(m);
-            int tw = RenderUtils.textWidth(m.getName());
+            int tw = RenderUtils.textWidth(m.getTitle());
             int rowW = tw + 10;
             int rx = right - rowW + (int) ((1f - p) * (rowW + 6));
             int ry = y + i * ROW;
@@ -69,7 +69,7 @@ public final class ArrayListModule extends HudModule {
 
             RenderUtils.rect(g, rx, ry, rowW, ROW, RenderUtils.withAlpha(bg, Math.max(8, (int) (bgAlpha * p))));
             RenderUtils.rect(g, rx + rowW - 2, ry, 2, ROW, RenderUtils.withAlpha(color, alpha));
-            RenderUtils.text(g, m.getName(), rx + 4, ry + 2, RenderUtils.withAlpha(color, alpha));
+            RenderUtils.text(g, m.getTitle(), rx + 4, ry + 2, RenderUtils.withAlpha(color, alpha));
         }
     }
 }

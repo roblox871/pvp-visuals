@@ -77,9 +77,19 @@ public final class RenderUtils {
         switch (InterfaceModule.styleName()) {
             case "Minimal" -> rect(g, x, y + r, 2, Math.max(0, h - 2 * r), accent);
             case "Solid" -> gradientH(g, x + r, y, inner, 2, accent, InterfaceModule.accent2());
+            case "Neon" -> {
+                int c1 = withAlpha(accent, 200), c2 = withAlpha(InterfaceModule.accent2(), 200);
+                gradientH(g, x + r, y, inner, 1, c1, c2);
+                gradientH(g, x + r, y + h - 1, inner, 1, c2, c1);
+                gradientV(g, x, y + r, 1, Math.max(0, h - 2 * r), c1, c2);
+                gradientV(g, x + w - 1, y + r, 1, Math.max(0, h - 2 * r), c1, c2);
+                gradientV(g, x + 1, y + 1, Math.max(0, w - 2), Math.max(0, h / 2), withAlpha(accent, 40), 0x00000000);
+            }
             default -> {
                 gradientH(g, x + r, y, inner, 1, accent, InterfaceModule.accent2());
-                rect(g, x + r, y + 1, inner, 1, 0x14FFFFFF);
+                // мягкий «глянец» в верхней половине панели и тонкая подсветка снизу
+                gradientV(g, x + 1, y + 1, Math.max(0, w - 2), Math.max(0, h / 2), 0x1CFFFFFF, 0x00FFFFFF);
+                gradientH(g, x + r, y + h - 1, inner, 1, withAlpha(accent, 70), withAlpha(InterfaceModule.accent2(), 70));
             }
         }
     }
